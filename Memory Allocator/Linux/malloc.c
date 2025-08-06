@@ -3,11 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
+// #include <windows.h>
 #include <errno.h>
 #include <time.h>
 #include <inttypes.h>
-#include "sbrk.h"
+//#include "sbrk.h"
+#include <unistd.h>
 
 #define MIN_ALLOCATION 1024
 #define PACK(size, alloc) ((size) | (alloc))
@@ -102,6 +103,10 @@ void* my_malloc(unsigned bytes) {
 		baseOfList.s.ptr = freeLstStartP = prevp = &baseOfList;
 		baseOfList.s.size_and_alloc = PACK(0, 1); /*changed*/
 	}
+    else{
+        prevp = freeLstStartP;
+    }
+
 	for (cursor = prevp->s.ptr;; prevp = cursor, cursor = cursor->s.ptr) {
 		unsigned int cursor_size = GET_SIZE(cursor->s.size_and_alloc);
 		if (cursor_size >= units) {
@@ -169,3 +174,4 @@ int main() {
 	my_free(ptr);
 	return 0;
 }
+
